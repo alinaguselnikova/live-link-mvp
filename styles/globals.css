@@ -83,6 +83,7 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+
 }
 
 body {
@@ -93,6 +94,8 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  font-family: "Roboto", sans-serif;
+
 }
 
 a {
@@ -104,4 +107,89 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+
+.lk-prejoin {
+  position: absolute;  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 570px);
+}
+
+
+.lk-camera-off-note {
+position: absolute;
+top: 70px;
+left: 0;
+width: 100%;
+display: flex;
+justify-content: center;
+}
+
+
+.lk-button-group-container {
+position: absolute;
+top: 180px;
+left: 0px;
+display: flex; 
+flex-direction: row;
+gap: 10px;
+justify-content: center;
+}
+/* .lk button audio {
+  position: absolute;
+}
+
+.lk button audio {
+  position: absolute;
+} */
+video { 
+  position: relative;
+  top: 70px;
+  width: 570px;
+  height: 320px;
+}
+
+.enter {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "Roboto", sans-serif;
+}
+
+.heading {
+  padding-bottom: 50px;
+  /* font-family: "Roboto", sans-serif; */
+  font-weight: 900;
+  font-style: normal;
+}
+
+.enter-button {
+  padding: 10px;
+  width: 300px;
+  font-weight: 700;
+  margin-bottom: 50px;
+}
+.encryption-container {
+  display: flex;
+  margin-bottom: 30px;
+}
+
+#use-e2ee {
+  margin-right: 10px;
+}
+
+#passphrase {
+  margin-left: 10px;
+}
+
+.lk-control-bar {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: stretch;
 }
