@@ -1,24 +1,11 @@
-import React from "react";
-React.useEffect = React.useLayoutEffect;
+import React from 'react';
 
-export function useServerUrl(region?: string) {
-  const [serverUrl, setServerUrl] = React.useState<string | undefined>();
-  React.useEffect(() => {
-    let endpoint = `/api/url`;
-    if (region) {
-      endpoint += `?region=${region}`;
-    }
-    fetch(endpoint).then(async (res) => {
-      if (res.ok) {
-        const body = await res.json();
-        console.log(body);
-        setServerUrl(body.url);
-      } else {
-        throw Error("Error fetching server url, check server logs");
-      }
-    });
-  });
-  return serverUrl;
+if (typeof window === 'undefined') {
+  React.useLayoutEffect = () => {};
+}
+
+export function useServerUrl() {
+  return process.env.NEXT_PUBLIC_LIVEKIT_URL;
 }
 
 export function encodePassphrase(passphrase: string) {
@@ -34,8 +21,8 @@ export function generateRoomId(): string {
 }
 
 export function randomString(length: number): string {
-  let result = "";
-  const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let result = '';
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
   const charactersLength = characters.length;
   for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
