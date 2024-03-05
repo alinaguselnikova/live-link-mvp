@@ -19,7 +19,7 @@ import {
   VideoPreset,
   VideoPresets,
 } from 'livekit-client';
-import { UserInfo, userInfo } from 'os';
+// import useRoomOptions from '../api/hooks/useRoomOptions';
 
 export default function EnterPage() {
   const router = useRouter();
@@ -83,15 +83,6 @@ type ActiveRoomProps = {
   onLeave?: () => void;
 };
 const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
- let [tokenOptions, setTokenOptions] = React.useState< object|undefined>({});
-
-  React.useEffect(() => {
-    setTokenOptions({
-      userInfo: {
-          identity: userChoices.username,
-          name: userChoices.username,
-    }})
-  },[userChoices.username])
   /** FIXME: unnecessary useMemo */
   // const tokenOptions = React.useMemo(() => {
   //   return {
@@ -101,6 +92,17 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
   //     },
   //   };
   // }, [userChoices.username]);
+
+  let [tokenOptions, setTokenOptions] = React.useState<object | undefined>({});
+
+  React.useEffect(() => {
+    setTokenOptions({
+      userInfo: {
+        identity: userChoices.username,
+        name: userChoices.username,
+      },
+    });
+  }, [userChoices.username]);
 
   const token = useToken(
     process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT,
@@ -118,21 +120,28 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
   const liveKitUrl = useServerUrl(region as string | undefined);
 
   const worker =
-    typeof window != 'undefined' &&
+    typeof window !== 'undefined' &&
     e2eePassphrase &&
     new Worker(new URL('livekit-client/e2ee-worker', import.meta.url));
 
   const e2eeEnabled = !!(e2eePassphrase && worker);
   const keyProvider = new ExternalE2EEKeyProvider();
+
+  // const roomOptions = useRoomOptions(e2eeEnabled, hq,
+  //   codec,
+  //   userChoices,
+  //   keyProvider,
+  //   worker)
   /** FIXME: unnecessary useMemo, move all room building logic into hook plz ^_^ */
-  const roomOptions = React.useMemo((): RoomOptions => {
+  let [roomOptions, setRoomOptions] = React.useState<RoomOptions>();
+  React.useEffect(() => {
     let videoCodec: VideoCodec | undefined = (
       Array.isArray(codec) ? codec[0] : codec ?? 'vp9'
     ) as VideoCodec;
     if (e2eeEnabled && (videoCodec === 'av1' || videoCodec === 'vp9')) {
       videoCodec = undefined;
     }
-    return {
+    setRoomOptions({
       videoCaptureDefaults: {
         deviceId: userChoices.videoDeviceId ?? undefined,
         resolution: hq === 'true' ? VideoPresets.h2160 : VideoPresets.h720,
@@ -157,15 +166,54 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
             worker,
           }
         : undefined,
-    };
+    }
+    );
   }, [userChoices, hq, codec]);
+  // const roomOptions = React.useMemo((): RoomOptions => {
+  //   let videoCodec: VideoCodec | undefined = (
+  //     Array.isArray(codec) ? codec[0] : codec ?? 'vp9'
+  //   ) as VideoCodec;
+  //   if (e2eeEnabled && (videoCodec === 'av1' || videoCodec === 'vp9')) {
+  //     videoCodec = undefined;
+  //   }
+  //   return {
+  //     videoCaptureDefaults: {
+  //       deviceId: userChoices.videoDeviceId ?? undefined,
+  //       resolution: hq === 'true' ? VideoPresets.h2160 : VideoPresets.h720,
+  //     },
+  //     publishDefaults: {
+  //       dtx: false,
+  //       videoSimulcastLayers:
+  //         hq === 'true'
+  //           ? [VideoPresets.h1080, VideoPresets.h720]
+  //           : [VideoPresets.h540, VideoPresets.h216],
+  //       red: !e2eeEnabled,
+  //       videoCodec,
+  //     },
+  //     audioCaptureDefaults: {
+  //       deviceId: userChoices.audioDeviceId ?? undefined,
+  //     },
+  //     adaptiveStream: { pixelDensity: 'screen' },
+  //     dynacast: true,
+  //     e2ee: e2eeEnabled
+  //       ? {
+  //           keyProvider,
+  //           worker,
+  //         }
+  //       : undefined,
+  //   };
+  // }, [userChoices, hq, codec]);
 
   /** FIXME: instead useMemo use useState+useEffect w/ empty deps array (move into hook) */
-  const room = React.useMemo(() => new Room(roomOptions), []);
+  // const room = React.useMemo(() => new Room(roomOptions), []);
+  let [room, setRoom] = React.useState<Room>();
+  React.useEffect(() => {
+    setRoom(new Room(roomOptions));
+  }, []);
 
   if (e2eeEnabled) {
     keyProvider.setKey(decodePassphrase(e2eePassphrase));
-    room.setE2EEEnabled(true).catch((e) => {
+    room!.setE2EEEnabled(true).catch((e) => {
       if (e instanceof DeviceUnsupportedError) {
         alert(
           `You're trying to join an encrypted meeting, but your browser does not support it. Please update it to the latest version and try again.`,
@@ -174,6 +222,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
       }
     });
   }
+
   const connectOptions = React.useMemo((): RoomConnectOptions => {
     return {
       autoSubscribe: true,
