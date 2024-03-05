@@ -19,6 +19,7 @@ import {
   VideoPreset,
   VideoPresets,
 } from 'livekit-client';
+import { UserInfo, userInfo } from 'os';
 
 export default function EnterPage() {
   const router = useRouter();
@@ -82,15 +83,25 @@ type ActiveRoomProps = {
   onLeave?: () => void;
 };
 const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
-  /** FIXME: unnecessary useMemo */
-  const tokenOptions = React.useMemo(() => {
-    return {
+ let [tokenOptions, setTokenOptions] = React.useState< object|undefined>({});
+
+  React.useEffect(() => {
+    setTokenOptions({
       userInfo: {
-        identity: userChoices.username,
-        name: userChoices.username,
-      },
-    };
-  }, [userChoices.username]);
+          identity: userChoices.username,
+          name: userChoices.username,
+    }})
+  },[userChoices.username])
+  /** FIXME: unnecessary useMemo */
+  // const tokenOptions = React.useMemo(() => {
+  //   return {
+  //     userInfo: {
+  //       identity: userChoices.username,
+  //       name: userChoices.username,
+  //     },
+  //   };
+  // }, [userChoices.username]);
+
   const token = useToken(
     process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT,
     roomName,
