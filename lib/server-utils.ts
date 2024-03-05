@@ -4,5 +4,17 @@ export function getRoomClient(): RoomServiceClient {
   if (typeof process.env.LIVEKIT_API_KEY === 'undefined') {
     throw new Error('LIVEKIT_API_KEY is not defined');
   }
-  return new RoomServiceClient(process.env.LIVEKIT_API_KEY);
+  return new RoomServiceClient(getLiveKitURL());
+}
+
+export function getLiveKitURL(region?: string | string[]): string {
+  let targetKey = 'LIVEKIT_URL';
+  if(region && !Array.isArray(region)) {
+      targetKey = `LIVEKIT_URL_${region}`.toUpperCase();
+  }
+  const url = process.env[targetKey];
+  if(!url) {
+      throw new Error(`${targetKey} is not defined`);
+  }
+  return url;
 }

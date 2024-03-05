@@ -1,11 +1,28 @@
 import React from 'react';
 
-if (typeof window === 'undefined') {
-  React.useLayoutEffect = () => {};
-}
+// if (typeof window === 'undefined') {
+//   React.useLayoutEffect = () => {};
+// }
 
-export function useServerUrl() {
-  return process.env.NEXT_PUBLIC_LIVEKIT_URL;
+export function useServerUrl(region?: string) {
+  // return process.env.NEXT_PUBLIC_LIVEKIT_URL;
+  const [serverUrl, setServerUrl] = React.useState<string | undefined>();
+  React.useEffect(() => {
+    let endpoint = `/api/url`;
+    if (region) {
+      endpoint += `?region=${region}`;
+    }
+    fetch(endpoint).then(async (res) => {
+      if (res.ok) {
+        const body = await res.json();
+        console.log(body);
+        setServerUrl(body.url);
+      } else {
+        throw Error("Error fetching server url, check server logs");
+      }
+    });
+  });
+  return serverUrl;
 }
 
 export function encodePassphrase(passphrase: string) {

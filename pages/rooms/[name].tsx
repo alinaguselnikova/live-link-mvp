@@ -104,7 +104,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
     typeof window !== 'undefined' &&
     decodePassphrase(location.hash.substring(1));
 
-  const liveKitUrl = useServerUrl();
+  const liveKitUrl = useServerUrl(region as string | undefined);
 
   const worker =
     typeof window != 'undefined' &&
