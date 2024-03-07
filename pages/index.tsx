@@ -22,7 +22,7 @@ function StartingPage() {
     }
   };
   return (
-    <main className="w-full h-full flex flex-col justify-center items-center bg-white">
+    <main className="w-full h-full flex flex-col justify-center items-center">
       <div className="flex flex-col justify-center items-center gap-8">
       <h1 className="text-4xl">LiveLink Demo Version</h1>
       <button className="border rounded-lg border-gray-300 bg-gray-50 px-8 py-2 text-xl flex items-center justify-center hover:scale-110 transition duration-100" onClick={startMeeting}>

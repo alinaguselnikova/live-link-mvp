@@ -11,9 +11,55 @@ body,
     height: 100%;
     padding: 0;
     margin: 0;
+    background-color: gray;
 }
 
 .lk-prejoin {
-    @apply bg-red-700;
+    @apply bg-gray-600;
     @apply w-full;
+    /* @apply mt-10; */
+    /* @apply grid; */
+    /* @apply justify-center;  */
+}
+
+.prejoin-video {
+    /* @apply flex;
+    @apply justify-center;
+    @apply items-center; */
+    /* @apply w-min; */
+}
+
+.lk-video-container {
+    @apply flex;
+    @apply mb-20;
+    @apply w-3/6;
+    @apply overflow-hidden;
+    @apply mr-auto;
+    @apply ml-auto;
+    @apply relative;
+    @apply top-10;
+}
+
+.lk-camera-off-note {
+    @apply relative;
+    @apply mr-auto;
+    @apply ml-auto;
+}
+.lk-button-group-container {
+    @apply flex;
+    @apply justify-center;
+    @apply gap-10;
+}
+
+.lk-username-container {
+    @apply flex;
+    @apply justify-center;
+    @apply gap-7;
+}
+
+.lk-control-bar {
+    @apply flex;
+    @apply justify-center;
+    @apply items-baseline;
+    @apply gap-10;
 }
