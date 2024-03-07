@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import {
   LiveKitRoom,
@@ -9,12 +10,13 @@ import {
 } from '@livekit/components-react';
 import { useRouter } from 'next/router';
 import useRoomOptions from '../api/hooks/useRoomOptions';
+import useTokenOptions from '../api/hooks/useTokenOptions';
 
 export default function EnterPage() {
   const router = useRouter();
   const { name: roomName } = router.query;
 
-console.log(roomName);
+  console.log(roomName);
 
   const [preJoinChoices, setPreJoinChoices] = React.useState<
     LocalUserChoices | undefined
@@ -40,7 +42,7 @@ console.log(roomName);
           //   display: 'flex',
           //   justifyContent: 'center',
           // }}
-          className='w-full h-screen flex'
+          className="w-full h-screen flex"
         >
           <PreJoin
             onError={(err) =>
@@ -62,25 +64,8 @@ type ActiveRoomProps = {
   onLeave?: () => void;
 };
 const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
+  const tokenOptions = useTokenOptions(userChoices, roomName);
 
-  let [tokenOptions, setTokenOptions] = React.useState<object | undefined>({});
-
-  React.useEffect(() => {
-    setTokenOptions({
-      userInfo: {
-        identity: userChoices.username,
-        name: userChoices.username,
-      },
-    });
-  }, [userChoices.username]);
-
-  const token = useToken(
-    process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT,
-    roomName,
-    tokenOptions,
-  );
-
- 
   const roomOptions = useRoomOptions(userChoices);
 
   return (
@@ -88,7 +73,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
       {roomOptions.liveKitUrl && (
         <LiveKitRoom
           room={roomOptions.room}
-          token={token}
+          token={tokenOptions}
           serverUrl={roomOptions.liveKitUrl}
           connectOptions={roomOptions.connectOptions}
           video={userChoices.videoEnabled}
@@ -101,4 +86,3 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
     </>
   );
 };
-
