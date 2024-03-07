@@ -1,8 +1,8 @@
 import React from 'react';
 
-// if (typeof window === 'undefined') {
-//   React.useLayoutEffect = () => {};
-// }
+if (typeof window === 'undefined') {
+  React.useLayoutEffect = () => {};
+}
 
 export function useServerUrl(region?: string) {
   // return process.env.NEXT_PUBLIC_LIVEKIT_URL;
